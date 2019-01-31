@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 X, y = make_blobs(n_samples=500, centers=2, random_state=6)
 y[y == 0] = -1
 
-'''
-plt.scatter(X[:, 0], X[:, 1], c=y, s=20)
-plt.xlabel("feature_1")
-plt.ylabel("feature_2")
-plt.show()
-'''
+
+# plt.scatter(X[:, 0], X[:, 1], c=y, s=20)
+# plt.xlabel("feature_1")
+# plt.ylabel("feature_2")
+# plt.show()
 
 
 class Raw():
