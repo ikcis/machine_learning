@@ -5,12 +5,31 @@ class ID3_Decision_Tree():
     def __init__(self):
         self.ID3_Tree = None
 
-    def fit(self, data_set, feature_name):
-        self.ID3_Tree = self.generate_tree(data_set, feature_name)
+    def fit(self, data_set, features_name):
+        self.ID3_Tree = self.generate_tree(data_set, features_name)
         return self.ID3_Tree
 
-    def predict(self, test_data, test_feature_name):
+    def predict(self, test_data, test_features_name):
+        model = self.ID3_Tree
+        result = []
+        for test_example in test_data:
+            example_cate = self.classify(model, test_example, test_features_name)
+            result.append(example_cate)
+        return result
 
+    def classify(self, ID3_Tree, test_example, test_features_name):
+        if ID3_Tree is None:
+            raise NameError("未经过训练，没有可用的树")
+        first_key = list(ID3_Tree.keys())[0]
+        second_dict = ID3_Tree[first_key]
+        feature_index = test_features_name.index(first_key)
+        for key in second_dict.keys():
+            if test_example[feature_index] == key:
+                if type(second_dict[key]).__name__ == 'dict':
+                    example_category = self.classify(second_dict[key], test_example, test_features_name)
+                else:
+                    example_category = second_dict[key]
+                return example_category
 
     def cal_shannon_entropy(self, data_set):
         label_counts = {}
@@ -97,7 +116,7 @@ data_set = [[1, 1, 'yes'],
 
 feature_name = ['color', 'weight']
 
-id3_tree_object.fit(data_set, feature_name)
+print(id3_tree_object.fit(data_set, feature_name))
 
 test_data = [[0, 0],
              [0, 1],
@@ -105,4 +124,4 @@ test_data = [[0, 0],
 
 test_feature_name = ['color', 'weight']
 
-id3_tree_object.predict(test_data, test_feature_name)
+print(id3_tree_object.predict(test_data, test_feature_name))
