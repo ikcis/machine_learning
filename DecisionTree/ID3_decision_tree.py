@@ -13,11 +13,42 @@ class ID3_Decision_Tree():
         pass
 
     def cal_shannon_entropy(self, data_set):
+        label_counts = {}
+        data_len = len(data_set)
+
+        for example in data_set:
+            label = example[-1]
+            if label in label_counts.keys():
+                label_counts[label] += 1
+            else:
+                label_counts[label] = 1
+
+        probs = np.asarray(list(label_counts.values())) / data_len
+        shannon_entropy = -np.sum(probs * np.log2(probs))
+        return shannon_entropy
+
+    def split_data_set(self, data_set, axis):
+        column_single_value = set([example[axis] for example in data_set])
+        all_sub_data = []
+        for value in column_single_value:
+            sub_data = []
+            for example in data_set:
+                sub_example = []
+                if example[axis] == value:
+                    sub_example.extend(example[:axis])
+                    sub_example.extend(example[axis + 1:])
+                    sub_data.append(sub_example)
+            all_sub_data.append(sub_data)
+        return all_sub_data, column_single_value
 
     def choose_best_feature(self, data_set):
-        feature_len = len(data_set[0])-1
+        feature_len = len(data_set[0]) - 1
         data_len = len(data_set)
-        data_set_entropy =
+        data_set_entropy = self.cal_shannon_entropy(data_set)
+        all_feature_info_gain = np.zeros(feature_len)
+        for i in range(feature_len):
+            all_sub_data, _ = self.split_data_set(data_set, i)
+
 
     def vote(self, categories):
         cate_count = {}
