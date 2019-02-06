@@ -10,7 +10,7 @@ class ID3_Decision_Tree():
         return self.ID3_Tree
 
     def predict(self, test_data, test_feature_name):
-        pass
+
 
     def cal_shannon_entropy(self, data_set):
         label_counts = {}
@@ -48,7 +48,15 @@ class ID3_Decision_Tree():
         all_feature_info_gain = np.zeros(feature_len)
         for i in range(feature_len):
             all_sub_data, _ = self.split_data_set(data_set, i)
-
+            conditional_entropy = 0
+            for sub_data in all_sub_data:
+                sub_prob = len(sub_data) / data_len
+                sub_enropy = self.cal_shannon_entropy(sub_data)
+                conditional_entropy += sub_prob * sub_enropy
+            feature_info_gain = data_set_entropy - conditional_entropy
+            all_feature_info_gain[i] = feature_info_gain
+        best_feature_idx = np.argmax(all_feature_info_gain)
+        return all_feature_info_gain, best_feature_idx
 
     def vote(self, categories):
         cate_count = {}
@@ -68,8 +76,15 @@ class ID3_Decision_Tree():
             return self.vote(categories)
 
         _, best_feature_id = self.choose_best_feature(data_set)
-
         best_feature_name = features_name[best_feature_id]
+        ID3_tree = {best_feature_name: {}}
+        del features_name[best_feature_id]
+        all_sub_data, all_unique_value = self.split_data_set(data_set, best_feature_id)
+        for unique_value, sub_data in zip(all_unique_value, all_sub_data):
+            sub_features_name = features_name[:]
+            ID3_tree[best_feature_name][unique_value] = self.generate_tree(sub_data, sub_features_name)
+
+        return ID3_tree
 
 
 id3_tree_object = ID3_Decision_Tree()
