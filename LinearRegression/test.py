@@ -1,20 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-def func(x):
-    return 4.8 * x + 5.2
-
-
-num = 10
-std = 0.25
-
-x = np.linspace(0, 1, num)
-x = np.expand_dims(x, 0)
-y = func(x) + np.random.normal(scale=std, size=x.shape)
-
-print(x.shape)
-print(y.shape)
-
-a = np.random.normal(size=(3,5))
-print(a)
+m = 80  # 样本数
+n = 7  # 特征数
+X_train = np.random.normal(size=(m, n))
+W_train_true = np.random.normal(size=(X_train.shape[1], 1))
+Y_no_noise = np.dot(X_train, W_train_true)
+Y_train = Y_no_noise + np.random.normal(scale=0.25, size=Y_no_noise.shape)
+print(type(X_train))
+X_train.T * (np.dot(X_train, W_train_true) - Y_train)
