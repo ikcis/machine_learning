@@ -31,6 +31,36 @@ def gradAscent(dataMatIn, classLabels):
     return np.array(weights)
 
 
+# 随机梯度下降
+# 梯度下降优化算法在每次更新数据集时都需要遍历整个数据集，计算复杂都较高
+# 随机梯度下降一次只用一个样本点来更新回归系数
+def stocGradAscent0(dataMatrix, classLabels):
+    '''
+    Desc:
+        随机梯度下降，只使用一个样本点来更新回归系数
+    Args:
+        dataMatrix -- 输入数据的数据特征（除去最后一列）
+        classLabels -- 输入数据的类别标签（最后一列数据）
+    Returns:
+        weights -- 得到的最佳回归系数
+    '''
+    m, n = np.shape(dataMatrix)
+    alpha = 0.01
+    # n*1的矩阵
+    # 函数ones创建一个全1的数组
+    weights = np.ones(n)  # 初始化长度为n的数组，元素全部为 1
+    for i in range(m):
+        # sum(dataMatrix[i]*weights)为了求 f(x)的值， f(x)=a1*x1+b2*x2+..+nn*xn,此处求出的 h 是一个具体的数值，而不是一个矩阵
+        h = sigmoid(sum(dataMatrix[i] * weights))
+        # print 'dataMatrix[i]===', dataMatrix[i]
+        # 计算真实类别与预测类别之间的差值，然后按照该差值调整回归系数
+        error = classLabels[i] - h
+        # 0.01*(1*1)*(1*n)
+        # print weights, "*" * 10, dataMatrix[i], "*" * 10, error
+        weights = weights + alpha * error * dataMatrix[i]
+    return weights
+
+
 def plotBestFit(dataArr, labelMat, weights):
     n = np.shape(dataArr)[0]
     xcord1 = []
@@ -59,7 +89,8 @@ def plotBestFit(dataArr, labelMat, weights):
 def simpleTest():
     dataMat, labelMat = loadDataSet('./TestSet.txt')
     dataArr = np.array(dataMat)
-    weights = gradAscent(dataArr, labelMat)
+    # weights = gradAscent(dataArr, labelMat)
+    weights = stocGradAscent0(dataArr, labelMat)
     plotBestFit(dataArr, labelMat, weights)
 
 
